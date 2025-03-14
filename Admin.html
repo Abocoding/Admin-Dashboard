@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="Admin.css"> <!-- Link to external CSS -->
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Fitness+</h2>
+        <a href="#" id="home-link">Homepage</a>
+        <a href="#" id="member-record-link">Member Record</a>
+        <a href="#" id="trainer-record-link">Trainer Record</a>
+        <a href="#" id="settings-link">Settings</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Welcome to the Admin Dashboard</h1>
+        
+       <!-- Homepage Section -->
+        <div id="homepage" class="card">
+            <h3>Dashboard Overview</h3>
+            <p>Welcome to your Gym Admin Dashboard! Here’s an overview of key statistics and recent activities.</p>
+            
+            <div class="statistics">
+                <div class="stat-card">                     
+                    <h4>Total Members</h4>
+                    <p id="totalMembers">0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Total Trainers</h4>
+                    <p id="totalTrainers">0</p>
+                </div>
+            </div>
+
+            <h4>Attendance</h4>
+            <form id="attendanceForm" onsubmit="recordAttendance(event)">
+                <select id="attendanceMember" required>
+                    <option value="" disabled selected>Select Member for Attendance</option>
+                    <!-- Options will be populated with member names -->
+                </select>
+                <button type="submit">Check-in</button>
+                <button type="button" onclick="checkoutAttendance()">Check-out</button>
+            </form>
+
+            <h4>Recent Activities</h4>
+            <ul id="recentActivities">
+                <li>No recent activities.</li>
+            </ul>
+        </div>
+        
+        <!-- Member Record Section -->
+        <div id="member-record" class="card" style="display: none;">
+            <h3>Member Record</h3>
+            <form id="memberForm" onsubmit="addMember(event)">
+                <input type="text" id="memberName" placeholder="Member Name" required>
+                <input type="email" id="memberEmail" placeholder="Member Email" required>
+                <input type="text" id="memberPhone" placeholder="Member Phone" required>
+                <input type="date" id="joinDate" placeholder="Join Date" required>
+                <label for="membershipPeriod">Membership Period:</label>
+                <select id="membershipPeriod" required>
+                    <option value="" disabled selected>Select Membership Period</option>
+                    <option value="1 month">1 Month</option>
+                    <option value="3 months">3 Months</option>
+                    <option value="6 months">6 Months</option>
+                    <option value="1 year">1 Year</option>
+                </select>
+                <button type="submit">Add Member</button>
+            </form>
+            <table id="membersTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Join Date</th>
+                        <th>Membership Period</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="membersBody">
+                    <!-- Member records will be added here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Trainer Record Section -->
+        <div id="trainer-record" class="card" style="display: none;">
+            <h3>Trainer Record</h3>
+            <form id="trainerForm" onsubmit="addTrainer(event)">
+                <input type="text" id="trainerName" placeholder="Trainer Name" required>
+                <input type="email" id="trainerEmail" placeholder="Trainer Email" required>
+                <input type="text" id="trainerNum" placeholder="Trainer Number" required>
+                <input type="text" id="trainerSpecialty" placeholder="Specialty" required>
+                <button type="submit">Add Trainer</button>
+            </form>
+            <table id="trainersTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Specialty</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="trainersBody">
+                    <!-- Trainer records will be added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="settings" class="card" style="display: none;">
+            <h3>Settings</h3>
+            <p>Update your settings here.</p>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for switching views
+        document.getElementById('home-link').onclick = function() {
+            toggleDisplay('homepage');
+        }
+
+        document.getElementById('member-record-link').onclick = function() {
+            toggleDisplay('member-record');
+        }
+
+        document.getElementById('trainer-record-link').onclick = function() {
+            toggleDisplay('trainer-record');
+        }
+
+        document.getElementById('settings-link').onclick = function() {
+            toggleDisplay('settings');
+        }
+
+        function toggleDisplay(activeID) {
+            const sections = ['homepage', 'member-record', 'trainer-record', 'settings'];
+            sections.forEach(id => {
+                document.getElementById(id).style.display = id === activeID ? 'block' : 'none';
+            });
+        }
+
+        // Functions to manage Member records
+        function addMember(event) {
+            event.preventDefault();
+            const name = document.getElementById('memberName').value;
+            const email = document.getElementById('memberEmail').value;
+            const phone = document.getElementById('memberPhone').value;
+            const joinDate = new Date(document.getElementById('joinDate').value);
+            const membershipPeriod = document.getElementById('membershipPeriod').value;
+
+            // Calculate membership expiry date
+            const expiryDate = new Date(joinDate);
+            switch (membershipPeriod) {
+                case '1 month':
+                    expiryDate.setMonth(expiryDate.getMonth() + 1);
+                    break;
+                case '3 months':
+                    expiryDate.setMonth(expiryDate.getMonth() + 3);
+                    break;
+                case '6 months':
+                    expiryDate.setMonth(expiryDate.getMonth() + 6);
+                    break;
+                case '1 year':
+                    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+                    break;
+            }
+
+            // Determine status based on the current date
+            const currentDate = new Date();
+            const status = currentDate < expiryDate ? 'Registered' : 'Expired';
+
+            const row = createRow([name, email, phone, joinDate.toISOString().split('T')[0], membershipPeriod, status]);
+            document.getElementById('membersBody').appendChild(row);
+            document.getElementById('memberForm').reset();
+
+            // Add member to attendance dropdown
+            const attendanceSelect = document.getElementById('attendanceMember');
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            attendanceSelect.appendChild(option);
+        }
+
+        function createRow(data) {
+            const row = document.createElement('tr');
+            data.forEach(text => {
+                const cell = document.createElement('td');
+                cell.textContent = text;
+                row.appendChild(cell);
+            });
+
+            const actionsCell = document.createElement('td');
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.onclick = () => row.remove();
+            actionsCell.appendChild(deleteButton);
+            row.appendChild(actionsCell);
+            return row;
+        }
+
+        // Attendance functions
+        function recordAttendance(event) {
+            event.preventDefault();
+            const memberName = document.getElementById('attendanceMember').value;
+            const timestamp = new Date().toLocaleString();
+            const activity = `Check-in by ${memberName} at ${timestamp}`;
+
+            const activityItem = document.createElement('li');
+            activityItem.textContent = activity;
+
+            const recentActivities = document.getElementById('recentActivities');
+            recentActivities.appendChild(activityItem);
+        }
+
+        function checkoutAttendance() {
+            const memberName = document.getElementById('attendanceMember').value;
+            const timestamp = new Date().toLocaleString();
+            const activity = `Check-out by ${memberName} at ${timestamp}`;
+
+            const activityItem = document.createElement('li');
+            activityItem.textContent = activity;
+
+            const recentActivities = document.getElementById('recentActivities');
+            recentActivities.appendChild(activityItem);
+        }
+
+        // Functions to manage Trainer records
+        function addTrainer(event) {
+            event.preventDefault();
+            const name = document.getElementById('trainerName').value;
+            const email = document.getElementById('trainerEmail').value;
+            const specialty = document.getElementById('trainerSpecialty').value;
+
+            const row = createTrainerRow([name, email, specialty]);
+            document.getElementById('trainersBody').appendChild(row);
+            document.getElementById('trainerForm').reset();
+        }
+
+        function createTrainerRow(data) {
+            const row = document.createElement('tr');
+            data.forEach(text => {
+                const cell = document.createElement('td');
+                cell.textContent = text;
+                row.appendChild(cell);
+            });
+
+            const actionsCell = document.createElement('td');
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.onclick = () => row.remove();
+            actionsCell.appendChild(deleteButton);
+            row.appendChild(actionsCell);
+            return row;
+        }
+    </script>
+
+</body>
+</html>
