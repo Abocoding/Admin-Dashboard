@@ -1,25 +1,25 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="Admin.css"> <!-- Link to external CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- Material Icons -->
 </head>
 <body>
 
     <div class="sidebar">
         <h2>Fitness+</h2>
-        <a href="#" id="home-link">Homepage</a>
-        <a href="#" id="member-record-link">Member Record</a>
-        <a href="#" id="trainer-record-link">Trainer Record</a>
-        <a href="#" id="settings-link">Settings</a>
+        <a href="#" id="home-link"><span class="material-icons">home</span> Homepage</a>
+        <a href="#" id="member-record-link"><span class="material-icons">people</span> Member Record</a>
+        <a href="#" id="trainer-record-link"><span class="material-icons">fitness_center</span> Trainer Record</a>
+        <a href="#" id="settings-link"><span class="material-icons">settings</span> Settings</a>
     </div>
 
     <div class="main-content">
-        <h1>Welcome to the Admin Dashboard</h1>
+        <h1>Admin Dashboard</h1>
         
-       <!-- Homepage Section -->
+        <!-- Homepage Section -->
         <div id="homepage" class="card">
             <h3>Dashboard Overview</h3>
             <p>Welcome to your Gym Admin Dashboard! Here’s an overview of key statistics and recent activities.</p>
@@ -35,15 +35,8 @@
                 </div>
             </div>
 
-            <h4>Attendance</h4>
-            <form id="attendanceForm" onsubmit="recordAttendance(event)">
-                <select id="attendanceMember" required>
-                    <option value="" disabled selected>Select Member for Attendance</option>
-                    <!-- Options will be populated with member names -->
-                </select>
-                <button type="submit">Check-in</button>
-                <button type="button" onclick="checkoutAttendance()">Check-out</button>
-            </form>
+            <h4>Attendance Management</h4>
+            <p>Attendance for all members is recorded automatically using the biometric system. Please ensure the system is functioning correctly for accurate member tracking.</p>
 
             <h4>Recent Activities</h4>
             <ul id="recentActivities">
@@ -78,6 +71,7 @@
                         <th>Join Date</th>
                         <th>Membership Period</th>
                         <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="membersBody">
@@ -93,7 +87,16 @@
                 <input type="text" id="trainerName" placeholder="Trainer Name" required>
                 <input type="email" id="trainerEmail" placeholder="Trainer Email" required>
                 <input type="text" id="trainerNum" placeholder="Trainer Number" required>
-                <input type="text" id="trainerSpecialty" placeholder="Specialty" required>
+                
+                <label for="trainerAssignment">Trainer Assignment:</label>
+                <select id="trainerAssignment" required>
+                    <option value="" disabled selected>Select Assignment</option>
+                    <option value="Personal Trainer">Personal Trainer</option>
+                    <option value="Group Class Instructor">Group Class Instructor</option>
+                    <option value="Yoga Instructor">Yoga Instructor</option>
+                    <option value="Nutritionist">Nutritionist</option>
+                </select>
+
                 <button type="submit">Add Trainer</button>
             </form>
             <table id="trainersTable">
@@ -101,8 +104,10 @@
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Specialty</th>
+                        <th>Number</th>
+                        <th>Assignment</th>
                         <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="trainersBody">
@@ -114,10 +119,17 @@
         <!-- Settings Section -->
         <div id="settings" class="card" style="display: none;">
             <h3>Settings</h3>
-            <p>Update your settings here.</p>
+            
+            <h4>Profile Settings</h4>
+            <form id="profileForm" onsubmit="updateProfile(event)">
+                <input type="text" id="adminName" placeholder="Admin Name" required>
+                <input type="email" id="adminEmail" placeholder="Admin Email" required>
+                <input type="password" id="adminPassword" placeholder="New Password (leave blank to keep current)">
+                <button type="submit">Save Profile</button>
+            </form>
+            <button id="logoutButton" onclick="logout()">Logout</button>
         </div>
-    </div>
-
+        
     <script>
         // JavaScript for switching views
         document.getElementById('home-link').onclick = function() {
@@ -176,13 +188,6 @@
             const row = createRow([name, email, phone, joinDate.toISOString().split('T')[0], membershipPeriod, status]);
             document.getElementById('membersBody').appendChild(row);
             document.getElementById('memberForm').reset();
-
-            // Add member to attendance dropdown
-            const attendanceSelect = document.getElementById('attendanceMember');
-            const option = document.createElement('option');
-            option.value = name;
-            option.textContent = name;
-            attendanceSelect.appendChild(option);
         }
 
         function createRow(data) {
@@ -202,40 +207,18 @@
             return row;
         }
 
-        // Attendance functions
-        function recordAttendance(event) {
-            event.preventDefault();
-            const memberName = document.getElementById('attendanceMember').value;
-            const timestamp = new Date().toLocaleString();
-            const activity = `Check-in by ${memberName} at ${timestamp}`;
-
-            const activityItem = document.createElement('li');
-            activityItem.textContent = activity;
-
-            const recentActivities = document.getElementById('recentActivities');
-            recentActivities.appendChild(activityItem);
-        }
-
-        function checkoutAttendance() {
-            const memberName = document.getElementById('attendanceMember').value;
-            const timestamp = new Date().toLocaleString();
-            const activity = `Check-out by ${memberName} at ${timestamp}`;
-
-            const activityItem = document.createElement('li');
-            activityItem.textContent = activity;
-
-            const recentActivities = document.getElementById('recentActivities');
-            recentActivities.appendChild(activityItem);
-        }
-
         // Functions to manage Trainer records
         function addTrainer(event) {
             event.preventDefault();
             const name = document.getElementById('trainerName').value;
             const email = document.getElementById('trainerEmail').value;
-            const specialty = document.getElementById('trainerSpecialty').value;
+            const trainerNum = document.getElementById('trainerNum').value; // Retrieved trainer number
+            const assignment = document.getElementById('trainerAssignment').value;
 
-            const row = createTrainerRow([name, email, specialty]);
+            // Example status based on the assignment selected (this can be adjusted as required)
+            const status = 'Active';
+
+            const row = createTrainerRow([name, email, trainerNum, assignment, status]);
             document.getElementById('trainersBody').appendChild(row);
             document.getElementById('trainerForm').reset();
         }
@@ -248,14 +231,35 @@
                 row.appendChild(cell);
             });
 
-            const actionsCell = document.createElement('td');
+            const actionsCell = document.createElement('td'); // Actions column
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
-            deleteButton.onclick = () => row.remove();
+            deleteButton.onclick = () => row.remove(); // Functionality to remove the row
             actionsCell.appendChild(deleteButton);
             row.appendChild(actionsCell);
+            
             return row;
         }
+        function updateProfile(event) {
+        event.preventDefault();
+        // Handle profile update logic here
+        const name = document.getElementById('adminName').value;
+        const email = document.getElementById('adminEmail').value;
+        const password = document.getElementById('adminPassword').value;
+
+        // Here you would typically send the data to the server for processing
+        alert('Profile updated successfully! Name: ' + name + ', Email: ' + email);
+        
+        // Clear the form fields after successful update
+        document.getElementById('profileForm').reset();
+    }
+
+    function logout() {
+        // Implement logout logic here, such as redirecting to the login page or clearing session data
+        alert('You have been logged out!');
+        // Redirect to login page (example)
+        window.location.href = 'login.html'; // Adjust the URL as needed
+    }
     </script>
 
 </body>

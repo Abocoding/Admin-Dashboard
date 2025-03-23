@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Form</title>
+  <title>Admin Login</title>
   <link rel="stylesheet" href="login.css">
+  <link rel="stylesheet" href="Admin.css"> <!-- Link to Admin CSS for styling -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- Material Icons -->
 </head>
 <body>
   <div class="login-container">
     <div class="login-form">
       <h2>Admin Login</h2>
-      <form action="#" method="POST">
+      <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="input-group">
           <label for="username">Username</label>
           <input type="text" id="username" name="username" placeholder="Enter your username" required>
@@ -19,13 +21,30 @@
           <label for="password">Password</label>
           <input type="password" id="password" name="password" placeholder="Enter your password" required>
         </div>
-        <div class="remember-me">
-          <label for="remember">
-          </label>
-        </div>
         <button type="submit" class="login-btn">Login</button>
       </form>
     </div>
   </div>
+
+  <script>
+    function handleLogin(event) {
+      event.preventDefault();
+
+      // Dummy credentials for demonstration
+      const validUsername = "admin";
+      const validPassword = "password"; // Change as necessary or connect to your authentication system
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (username === validUsername && password === validPassword) {
+        // Redirect to the admin dashboard upon successful login
+        window.location.href = 'Admin.html'; // Adjust the file name as needed for your dashboard
+      } else {
+        alert('Invalid username or password. Please try again.');
+      }
+    }
+  </script>
+
 </body>
 </html>
