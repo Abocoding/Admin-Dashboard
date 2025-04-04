@@ -9,10 +9,17 @@
 <body>
 
     <div class="sidebar">
-        <h2>Fitness+</h2>
+        <div class="logo-title">
+            <div class="logo-container">
+                <img src="/Users/abdullahmorad/Desktop/logo.png" alt="Fitness+" class="logo">
+            </div>
+            <h2>Fitness+</h2>
+        </div>
         <a href="#" id="home-link"><span class="material-icons">home</span> Homepage</a>
         <a href="#" id="member-record-link"><span class="material-icons">people</span> Member Record</a>
         <a href="#" id="trainer-record-link"><span class="material-icons">fitness_center</span> Trainer Record</a>
+        <a href="#" id="class-record-link"><span class="material-icons">class</span> Class Record</a> <!-- New Class Record Link -->
+        <a href="#" id="reservation-link"><span class="material-icons">event</span> Reservation</a>
         <a href="#" id="settings-link"><span class="material-icons">settings</span> Settings</a>
     </div>
 
@@ -21,9 +28,7 @@
         
         <!-- Homepage Section -->
         <div id="homepage" class="card">
-            <h3>Dashboard Overview</h3>
-            <p>Welcome to your Gym Admin Dashboard! Here’s an overview of key statistics and recent activities.</p>
-            
+            <h3>Dashboard Overview</h3>            
             <div class="statistics">
                 <div class="stat-card">                     
                     <h4>Total Members</h4>
@@ -33,17 +38,40 @@
                     <h4>Total Trainers</h4>
                     <p id="totalTrainers">0</p>
                 </div>
+                <div class="stat-card">
+                    <h4>Total Classes</h4>
+                    <p id="totalClasses">0</p>
+                </div>
             </div>
 
-            <h4>Attendance Management</h4>
-            <p>Attendance for all members is recorded automatically using the biometric system. Please ensure the system is functioning correctly for accurate member tracking.</p>
+            <h4>Attendance Tracking</h4>
+            <div class="attendance-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Time-In</th>
+                            <th>Time-Out</th>
+                            <th>Date</th>
 
-            <h4>Recent Activities</h4>
-            <ul id="recentActivities">
-                <li>No recent activities.</li>
-            </ul>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceBody">
+                        <!-- Sample attendance data - you can populate this dynamically -->
+                    </tbody>
+                </table>
+                
+                <!-- Form to add new attendance records -->
+                <form id="attendanceForm" onsubmit="addAttendanceRecord(event)">
+                    <input type="text" id="attendanceName" placeholder="Member Name" required>
+                    <input type="time" id="timeIn" placeholder="Time In" required>
+                    <input type="time" id="timeOut" placeholder="Time Out" required>
+                    <input type="date" id="attendanceDate" required>
+                    <button type="submit">Add Record</button>
+                </form>
+            </div>
         </div>
-        
+
         <!-- Member Record Section -->
         <div id="member-record" class="card" style="display: none;">
             <h3>Member Record</h3>
@@ -52,7 +80,6 @@
                 <input type="email" id="memberEmail" placeholder="Member Email" required>
                 <input type="text" id="memberPhone" placeholder="Member Phone" required>
                 <input type="date" id="joinDate" placeholder="Join Date" required>
-                <label for="membershipPeriod">Membership Period:</label>
                 <select id="membershipPeriod" required>
                     <option value="" disabled selected>Select Membership Period</option>
                     <option value="1 month">1 Month</option>
@@ -70,6 +97,7 @@
                         <th>Phone</th>
                         <th>Join Date</th>
                         <th>Membership Period</th>
+                        <th>Deadline Date</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -79,7 +107,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         <!-- Trainer Record Section -->
         <div id="trainer-record" class="card" style="display: none;">
             <h3>Trainer Record</h3>
@@ -87,14 +115,13 @@
                 <input type="text" id="trainerName" placeholder="Trainer Name" required>
                 <input type="email" id="trainerEmail" placeholder="Trainer Email" required>
                 <input type="text" id="trainerNum" placeholder="Trainer Number" required>
-                
-                <label for="trainerAssignment">Trainer Assignment:</label>
                 <select id="trainerAssignment" required>
                     <option value="" disabled selected>Select Assignment</option>
                     <option value="Personal Trainer">Personal Trainer</option>
                     <option value="Group Class Instructor">Group Class Instructor</option>
-                    <option value="Yoga Instructor">Yoga Instructor</option>
-                    <option value="Nutritionist">Nutritionist</option>
+                    <option value="Boxing Trainer">Boxing Trainer</option>
+                    <option value="MMA Trainer">MMA Trainer</option>
+                    <option value="Judo Trainer">Judo Trainer</option>
                 </select>
 
                 <button type="submit">Add Trainer</button>
@@ -112,6 +139,138 @@
                 </thead>
                 <tbody id="trainersBody">
                     <!-- Trainer records will be added here -->
+                </tbody>
+            </table>
+        </div>
+
+<!-- Class Record Section -->
+<div id="class-record" class="card" style="display: none;">
+    <h3>Class Record</h3>
+    
+    <div class="class-tabs">
+        <button class="tab-button active" onclick="openClassTab('boxing')">Boxing</button>
+        <button class="tab-button" onclick="openClassTab('mma')">MMA</button>
+        <button class="tab-button" onclick="openClassTab('group')">Group Class</button>
+        <button class="tab-button" onclick="openClassTab('judo')">Judo</button>
+    </div>
+    
+    <!-- Boxing Class -->
+    <div id="boxing" class="class-tab-content" style="display: block;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="boxingBody">
+                <!-- Boxing class records will be added here -->
+                <tr>
+                    <td>John Doe</td>
+                    <td>0972442343</td>
+                    <td>2025-05-15</td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>0972442343</td>
+                    <td>2025-05-16</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- MMA Class -->
+    <div id="mma" class="class-tab-content" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="mmaBody">
+                <!-- MMA class records will be added here -->
+                <tr>
+                    <td>Mike Johnson</td>
+                    <td>0972442343</td>
+                    <td>2025-05-17</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Group Class -->
+    <div id="group" class="class-tab-content" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="groupBody">
+                <!-- Group class records will be added here -->
+                <tr>
+                    <td>Abdullah Hasan</td>
+                    <td>09765016209</td>
+                    <td>2025-05-18</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Judo Class -->
+    <div id="judo" class="class-tab-content" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="judoBody">
+                <!-- Judo class records will be added here -->
+                <tr>
+                    <td>Wyn Rizon</td>
+                    <td>0934348282</td>
+                    <td>2025-05-19</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+        <!-- Reservation Section -->
+        <div id="reservation" class="card" style="display: none;">
+            <h3>Reservations</h3>
+            <form id="reservationForm" onsubmit="addReservation(event)">
+                <select id="Class" required>
+                    <option value="" disabled selected>Select Class</option>
+                    <option value="Group Class">Group Class</option>
+                    <option value="Boxing">Boxing</option>
+                    <option value="MMA">MMA</option>
+                    <option value="Judo">Judo</option>
+                </select>
+                <input type="date" id="reservationDate" required>
+                <input type="time" id="reservationTime" required>
+                <input type="text" id="reservationTrainerName" placeholder="Trainer Name" required>
+                <button type="submit">Make Reservation</button>
+            </form>
+            <table id="reservationsTable">
+                <thead>
+                    <tr>
+                        <th>Class Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Trainer</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="reservationsBody">
+                    <!-- Reservation records will be added here -->
                 </tbody>
             </table>
         </div>
@@ -144,15 +303,190 @@
             toggleDisplay('trainer-record');
         }
 
+        document.getElementById('class-record-link').onclick = function() {
+            toggleDisplay('class-record');
+        }
+
+        document.getElementById('reservation-link').onclick = function() {
+            toggleDisplay('reservation');
+        }
+
         document.getElementById('settings-link').onclick = function() {
             toggleDisplay('settings');
         }
 
         function toggleDisplay(activeID) {
-            const sections = ['homepage', 'member-record', 'trainer-record', 'settings'];
+            const sections = ['homepage', 'member-record', 'trainer-record', 'class-record', 'reservation', 'settings'];
             sections.forEach(id => {
                 document.getElementById(id).style.display = id === activeID ? 'block' : 'none';
             });
+        }
+
+        // Functions for Class Record tabs
+        function openClassTab(tabName) {
+            // Hide all tab content
+            const tabContents = document.getElementsByClassName('class-tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].style.display = 'none';
+            }
+            
+            // Remove active class from all buttons
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+            
+            // Show the current tab and add active class to the button
+            document.getElementById(tabName).style.display = 'block';
+            event.currentTarget.classList.add('active');
+        }
+
+        // Function to add class records
+        function addClassRecord(event, classType) {
+            event.preventDefault();
+            
+            let className, trainer, time, days, capacity;
+            const daysList = [];
+            
+            switch(classType) {
+                case 'boxing':
+                    className = document.getElementById('boxingClassName').value;
+                    trainer = document.getElementById('boxingTrainer').value;
+                    time = document.getElementById('boxingTime').value;
+                    days = document.getElementById('boxingDays').selectedOptions;
+                    capacity = document.getElementById('boxingCapacity').value;
+                    break;
+                case 'mma':
+                    className = document.getElementById('mmaClassName').value;
+                    trainer = document.getElementById('mmaTrainer').value;
+                    time = document.getElementById('mmaTime').value;
+                    days = document.getElementById('mmaDays').selectedOptions;
+                    capacity = document.getElementById('mmaCapacity').value;
+                    break;
+                case 'group':
+                    className = document.getElementById('groupClassName').value;
+                    trainer = document.getElementById('groupTrainer').value;
+                    time = document.getElementById('groupTime').value;
+                    days = document.getElementById('groupDays').selectedOptions;
+                    capacity = document.getElementById('groupCapacity').value;
+                    break;
+                case 'judo':
+                    className = document.getElementById('judoClassName').value;
+                    trainer = document.getElementById('judoTrainer').value;
+                    time = document.getElementById('judoTime').value;
+                    days = document.getElementById('judoDays').selectedOptions;
+                    capacity = document.getElementById('judoCapacity').value;
+                    break;
+            }
+            
+            // Get selected days
+            for (let i = 0; i < days.length; i++) {
+                daysList.push(days[i].value);
+            }
+            
+            const rowData = [
+                className,
+                trainer,
+                formatTime(time),
+                daysList.join(', '),
+                capacity
+            ];
+            
+            const row = createClassRow(rowData);
+            document.getElementById(`${classType}Body`).appendChild(row);
+            
+            // Reset form
+            document.getElementById(`${classType}Form`).reset();
+            
+            // Update total classes count
+            updateClassCount();
+        }
+
+        function createClassRow(data) {
+            const row = document.createElement('tr');
+            data.forEach(text => {
+                const cell = document.createElement('td');
+                cell.textContent = text;
+                row.appendChild(cell);
+            });
+
+            const actionsCell = document.createElement('td');
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.className = 'delete-btn';
+            deleteButton.onclick = function() {
+                row.remove();
+                updateClassCount();
+            };
+            actionsCell.appendChild(deleteButton);
+            row.appendChild(actionsCell);
+            return row;
+        }
+
+        function updateClassCount() {
+            let total = 0;
+            const classTypes = ['boxing', 'mma', 'group', 'judo'];
+            
+            classTypes.forEach(type => {
+                total += document.getElementById(`reservationsBody`).children.length;
+            });
+            
+            document.getElementById('totalClasses').textContent = total;
+        }
+
+        // Functions to manage attendance records
+        function addAttendanceRecord(event) {
+            event.preventDefault();
+            const name = document.getElementById('attendanceName').value;
+            const timeIn = document.getElementById('timeIn').value;
+            const timeOut = document.getElementById('timeOut').value;
+            const date = document.getElementById('attendanceDate').value;
+
+            const tableBody = document.getElementById('attendanceBody');
+            const newRow = tableBody.insertRow();
+            
+            const cells = [
+                newRow.insertCell(0),
+                newRow.insertCell(1),
+                newRow.insertCell(2),
+                newRow.insertCell(3),
+                newRow.insertCell(4)
+            ];
+            
+            cells[0].textContent = name;
+            cells[1].textContent = formatTime(timeIn);
+            cells[2].textContent = formatTime(timeOut);
+            cells[3].textContent = date;
+            
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.className = 'delete-btn';
+            deleteButton.onclick = function() {
+                tableBody.removeChild(newRow);
+            };
+            cells[4].appendChild(deleteButton);
+            
+            document.getElementById('attendanceForm').reset();
+        }
+
+        function formatTime(timeString) {
+            // Convert 24-hour format to 12-hour format with AM/PM
+            const [hours, minutes] = timeString.split(':');
+            let period = 'AM';
+            let hour = parseInt(hours);
+            
+            if (hour >= 12) {
+                period = 'PM';
+                if (hour > 12) hour -= 12;
+            }
+            if (hour === 0) hour = 12;
+            
+            return `${hour}:${minutes} ${period}`;
+        }
+
+        function deleteAttendanceRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
         }
 
         // Functions to manage Member records
@@ -181,16 +515,22 @@
                     break;
             }
 
+            // Format the deadline date for display
+            const deadlineDateStr = expiryDate.toISOString().split('T')[0];
+            
             // Determine status based on the current date
             const currentDate = new Date();
-            const status = currentDate < expiryDate ? 'Registered' : 'Expired';
+            const status = currentDate < expiryDate ? 'Active' : 'Expired';
 
-            const row = createRow([name, email, phone, joinDate.toISOString().split('T')[0], membershipPeriod, status]);
+            const row = createMemberRow([name, email, phone, joinDate.toISOString().split('T')[0], membershipPeriod, deadlineDateStr, status]);
             document.getElementById('membersBody').appendChild(row);
             document.getElementById('memberForm').reset();
+            
+            // Update total members count
+            updateMemberCount();
         }
 
-        function createRow(data) {
+        function createMemberRow(data) {
             const row = document.createElement('tr');
             data.forEach(text => {
                 const cell = document.createElement('td');
@@ -201,10 +541,19 @@
             const actionsCell = document.createElement('td');
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
-            deleteButton.onclick = () => row.remove();
+            deleteButton.className = 'delete-btn';
+            deleteButton.onclick = function() {
+                row.remove();
+                updateMemberCount();
+            };
             actionsCell.appendChild(deleteButton);
             row.appendChild(actionsCell);
             return row;
+        }
+
+        function updateMemberCount() {
+            const memberCount = document.getElementById('membersBody').children.length;
+            document.getElementById('totalMembers').textContent = memberCount;
         }
 
         // Functions to manage Trainer records
@@ -212,15 +561,17 @@
             event.preventDefault();
             const name = document.getElementById('trainerName').value;
             const email = document.getElementById('trainerEmail').value;
-            const trainerNum = document.getElementById('trainerNum').value; // Retrieved trainer number
+            const trainerNum = document.getElementById('trainerNum').value;
             const assignment = document.getElementById('trainerAssignment').value;
 
-            // Example status based on the assignment selected (this can be adjusted as required)
             const status = 'Active';
 
             const row = createTrainerRow([name, email, trainerNum, assignment, status]);
             document.getElementById('trainersBody').appendChild(row);
             document.getElementById('trainerForm').reset();
+            
+            // Update total trainers count
+            updateTrainerCount();
         }
 
         function createTrainerRow(data) {
@@ -231,35 +582,71 @@
                 row.appendChild(cell);
             });
 
-            const actionsCell = document.createElement('td'); // Actions column
+            const actionsCell = document.createElement('td');
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
-            deleteButton.onclick = () => row.remove(); // Functionality to remove the row
+            deleteButton.className = 'delete-btn';
+            deleteButton.onclick = function() {
+                row.remove();
+                updateTrainerCount();
+            };
             actionsCell.appendChild(deleteButton);
             row.appendChild(actionsCell);
             
             return row;
         }
+
+        function updateTrainerCount() {
+            const trainerCount = document.getElementById('trainersBody').children.length;
+            document.getElementById('totalTrainers').textContent = trainerCount;
+        }
+
+        // Functions to manage Reservations
+        function addReservation(event) {
+            event.preventDefault();
+            const name = document.getElementById('Class').value;
+            const date = document.getElementById('reservationDate').value;
+            const time = document.getElementById('reservationTime').value;
+            const duration = document.getElementById('reservationTrainerName').value;
+
+            const row = createReservationRow([name, date, time, duration]);
+            document.getElementById('reservationsBody').appendChild(row);
+            document.getElementById('reservationForm').reset();
+        }
+
+        function createReservationRow(data) {
+            const row = document.createElement('tr');
+            data.forEach(text => {
+                const cell = document.createElement('td');
+                cell.textContent = text;
+                row.appendChild(cell);
+            });
+
+            const actionsCell = document.createElement('td');
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.className = 'delete-btn';
+            deleteButton.onclick = () => row.remove();
+            actionsCell.appendChild(deleteButton);
+            row.appendChild(actionsCell);
+            
+            return row;
+        }
+
         function updateProfile(event) {
-        event.preventDefault();
-        // Handle profile update logic here
-        const name = document.getElementById('adminName').value;
-        const email = document.getElementById('adminEmail').value;
-        const password = document.getElementById('adminPassword').value;
+            event.preventDefault();
+            const name = document.getElementById('adminName').value;
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
 
-        // Here you would typically send the data to the server for processing
-        alert('Profile updated successfully! Name: ' + name + ', Email: ' + email);
-        
-        // Clear the form fields after successful update
-        document.getElementById('profileForm').reset();
-    }
+            alert('Profile updated successfully! Name: ' + name + ', Email: ' + email);
+            document.getElementById('profileForm').reset();
+        }
 
-    function logout() {
-        // Implement logout logic here, such as redirecting to the login page or clearing session data
-        alert('You have been logged out!');
-        // Redirect to login page (example)
-        window.location.href = 'login.html'; // Adjust the URL as needed
-    }
+        function logout() {
+            alert('You have been logged out!');
+            window.location.href = 'login.html';
+        }
     </script>
 
 </body>
