@@ -5,6 +5,7 @@
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="Admin.css"> <!-- Link to external CSS -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- Material Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 </head>
 <body>
 
@@ -66,7 +67,7 @@
                     <input type="text" id="attendanceName" placeholder="Member Name" required>
                     <input type="time" id="timeIn" placeholder="Time In" required>
                     <input type="time" id="timeOut" placeholder="Time Out" required>
-                    <input type="date" id="attendanceDate" required>
+                    <input type="date" id="attendanceDate" placeholder="Date" required>
                     <button type="submit">Add Record</button>
                 </form>
             </div>
@@ -254,8 +255,8 @@
                     <option value="MMA">MMA</option>
                     <option value="Judo">Judo</option>
                 </select>
-                <input type="date" id="reservationDate" required>
-                <input type="time" id="reservationTime" required>
+                <input type="date" id="reservationDate" placeholder="Date" required>
+                <input type="time" id="reservationTime" placeholder="Time" required>
                 <input type="text" id="reservationTrainerName" placeholder="Trainer Name" required>
                 <button type="submit">Make Reservation</button>
             </form>
@@ -647,6 +648,49 @@
             alert('You have been logged out!');
             window.location.href = 'login.html';
         }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    <script>
+        // Initialize date pickers
+        flatpickr("#joinDate", {
+            dateFormat: "Y-m-d",
+            allowInput: true
+        });
+        
+        flatpickr("#attendanceDate", {
+            dateFormat: "Y-m-d",
+            allowInput: true
+        });
+        
+        flatpickr("#reservationDate", {
+            dateFormat: "Y-m-d",
+            allowInput: true
+        });
+        
+        // Initialize time pickers
+        flatpickr("#timeIn", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            allowInput: true
+        });
+        
+        flatpickr("#timeOut", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            allowInput: true
+        });
+        
+        flatpickr("#reservationTime", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            allowInput: true
+        });
     </script>
 
 </body>
